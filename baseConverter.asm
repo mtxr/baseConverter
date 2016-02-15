@@ -6,7 +6,13 @@
     outputText:         .asciiz "O numero na nova base eh: "
     inputBase:          .space 2
     outputBase:         .space 2
-    newline:   .asciiz  "\n"
+    inputNumberArray:   .space 32
+    outputNumberArray:  .space 32
+    newline:            .asciiz "\n"
+    binary:             .byte 'b'
+    octal:              .byte 'o'
+    decimal:            .byte 'd'
+    hexa:               .byte 'h'
 
 
 # program code
@@ -15,90 +21,91 @@
     .globl  main
 main:
     # Print string inputBaseText
-    la  $a0, inputBaseText   # load the address of inputBaseText
-    jal printString
+    la   $a0, inputBaseText     # load the address of inputBaseText
+    jal  printString
 
     # Get input base from user and save
-    la $a0, inputBase   # load inputBase address to argument0
-    jal readBase
-    jal printNewline
-    # END READING INPUT BASE
+    la   $a0, inputBase         # load inputBase address to argument0
+    jal  readBase
+    jal  printNewline
+    ############# END READING INPUT BASE #######################################
 
 
 
 
     # Print string inputNumberText
-    la  $a0, inputNumberText   # load the address of inputNumberText
-    jal printString
+    la   $a0, inputNumberText   # load the address of inputNumberText
+    jal  printString
 
     # Get input number from user and save
-    jal readInt
-    move $t0, $v0     # syscall results returned in $v0, storing input number in t0
-    jal printNewline
-    # END READING INPUT NUMBER
+    la   $a0, inputNumberArray  # load inputBase address to argument0
+    jal  readNumber
+    jal  printNewline
+    ############# END READING INPUT NUMBER #######################################
 
 
 
 
     # Print string outputBaseText
-    la  $a0, outputBaseText   # load the address of outputBaseText
-    jal printString
+    la   $a0, outputBaseText    # load the address of outputBaseText
+    jal  printString
 
     # Get output base from user and save
-    la $a0, outputBase   # load inputBase address to argument0
-    jal readBase
-    jal printNewline
-    # END READING OUTPUT BASE
-
-
-
+    la   $a0, outputBase        # load inputBase address to argument0
+    jal  readBase
+    jal  printNewline
+    ############# END READING OUTPUT BASE #######################################
 
     # At this point, we have:
     # t0 = input numner for conversion
     # data .inputBase  = base from conversion
     # data .outputBase = base from conversion
 
+    j convert
 
 
 
-
-
+printOutput:
     # Print string outputText
-    la  $a0, outputText
-    jal printString
+    la   $a0, outputText
+    jal  printString
 
     # Print converted number
-    li  $v0, 1       # print_int syscall code = 1
-    move $a0, $t0    # int to print must be loaded into $a0
-    syscall
+    la   $a0, inputNumberArray
+    jal  printString
 
     j exit
+
+convert:
+
+    j printOutput
 
 
 # Print string newline
 printNewline:
-    la  $a0, newline   # load the address of newline
-    li  $v0, 4       # print_string syscall code = 4
+    la  $a0, newline    # load the address of newline
+    li  $v0, 4          # print_string syscall code = 4
     syscall
-    jr $ra
+    jr  $ra
 
 printString:
-    li  $v0, 4       # print_string syscall code = 4
+    li  $v0, 4          # print_string syscall code = 4
     syscall
-    jr $ra
+    jr  $ra
 
 readBase:
     li  $v0, 8          # read_string syscall code = 8
-    li $a1, 2           # space allocated for inputBase
+    li  $a1, 2          # space allocated for inputBase
     syscall
-    jr $ra
+    jr  $ra
 
-readInt:
-    li  $v0, 5       # read_int syscall code = 5
+readNumber:
+    li  $v0, 8          # read_string syscall code = 8
+    li  $a1, 32         # space allocated for inputBase
     syscall
-    jr $ra
+    jr  $ra
 
 exit:
     jal printNewline
-    li  $v0, 10      # exit
+    li  $v0, 10         # exit
     syscall
