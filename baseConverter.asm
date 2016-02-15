@@ -1,11 +1,15 @@
 # Start .data segment (data!)
+
+# syscall used from
+# http://courses.missouristate.edu/KenVollmar/mars/Help/SyscallHelp.html
+# Mars documentation
+
 .data
     inputBaseText:      .asciiz "Digite a base do numero de entrada (b/o/d/h):   "
     outputBaseText:     .asciiz "Digite a base de conversão (b/o/d/h):   "
     inputNumberText:    .asciiz "Digite o numero a ser convertido:   "
+    ivalidBaseText:     .asciiz "Base invalida fornecida."
     outputText:         .asciiz "O numero na nova base eh: "
-    inputBase:          .space 2
-    outputBase:         .space 2
     inputNumberArray:   .space 32
     outputNumberArray:  .space 32
     newline:            .asciiz "\n"
@@ -25,8 +29,8 @@ main:
     jal  printString
 
     # Get input base from user and save
-    la   $a0, inputBase         # load inputBase address to argument0
     jal  readBase
+    move $t1, $v0
     jal  printNewline
     ############# END READING INPUT BASE #######################################
 
@@ -51,15 +55,14 @@ main:
     jal  printString
 
     # Get output base from user and save
-    la   $a0, outputBase        # load inputBase address to argument0
     jal  readBase
+    move $t2, $v0
     jal  printNewline
     ############# END READING OUTPUT BASE #######################################
 
     # At this point, we have:
-    # t0 = input numner for conversion
-    # data .inputBase  = base from conversion
-    # data .outputBase = base from conversion
+    # t1 = base from conversion
+    # t2 = base to conversion
 
     j convert
 
@@ -77,9 +80,58 @@ printOutput:
     j exit
 
 convert:
+    # is input binary?
+    la $t9, binary
+    lb $t9, 0($t9)
+    beq $t9, $t1, convertFromBinary
 
-    j printOutput
+    # is input octal?
+    la $t9, octal
+    lb $t9, 0($t9)
+    beq $t9, $t1, convertFromOctal
 
+    # is input Decimal?
+    la $t9, decimal
+    lb $t9, 0($t9)
+    beq $t9, $t1, convertFromDecimal
+
+    # is input Hexa?
+    la $t9, hexa
+    lb $t9, 0($t9)
+    beq $t9, $t1, convertFromHexa
+
+    # input is hexa
+    j invalidBase
+
+
+convertFromBinary:
+    # output base is binary too, so just print it
+    la $t9, binary
+    lb $t9, 0($t9)
+    beq $t9, $t2, printOutput
+
+
+convertFromOctal:
+    # output base is octal too, so just print it
+    la $t9, octal
+    lb $t9, 0($t9)
+    beq $t9, $t2, printOutput
+
+convertFromDecimal:
+    # output base is decimal too, so just print it
+    la $t9, decimal
+    lb $t9, 0($t9)
+    beq $t9, $t2, printOutput
+
+convertFromHexa:
+    # output base is hexa too, so just print it
+    la $t9, hexa
+    lb $t9, 0($t9)
+    beq $t9, $t2, printOutput
+
+invalidBase:
+    la   $a0, invalidBase
+    jal  printString
 
 # Print string newline
 printNewline:
@@ -94,8 +146,7 @@ printString:
     jr  $ra
 
 readBase:
-    li  $v0, 8          # read_string syscall code = 8
-    li  $a1, 2          # space allocated for inputBase
+    li  $v0, 12          # read_string syscall code = 8
     syscall
     jr  $ra
 
