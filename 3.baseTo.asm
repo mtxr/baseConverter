@@ -35,7 +35,8 @@ decimalToHexa:        # receive t0 with the divisor value
     divu $a0, $t0            # lo = a0/t0, hi = a0 % t0
     mfhi $t1                 # t1 = hi (remainder)
     mflo $a0                 # a0 = lo or a0 = (a0/t0)
-    ble  $t1, 9, sum48       # less then 10, sum 48
+    ble  $t1, 9, outputSum48 # less then 10, sum 48
+outputHexaNormalized:
     addi $t1, $t1, 55        # convert to char (ABCDEF)
     sb   $t1, 0($a1)         # save to outputArray
     addi $a1, $a1, 1         # ++ auxiliaryArray position
@@ -43,10 +44,6 @@ decimalToHexa:        # receive t0 with the divisor value
     jal  revertToOutputArray
     j    outputAsString
 
-sum48:
+outputSum48:
     addi $t1, $t1, 48        # convert to char
-    sb   $t1, 0($a1)         # save to outputArray
-    addi $a1, $a1, 1         # ++ auxiliaryArray position
-    bgtz $a0, decimalToHexa
-    jal  revertToOutputArray
-    j    outputAsString
+    j    outputHexaNormalized
