@@ -119,7 +119,7 @@ convertFromBinary:
     lb   $t9, 0($t9)
     beq  $t9, $t1, convertFromBinaryToDecimal
 
-    la   $t9, decimal
+    la   $t9, octal
     lb   $t9, 0($t9)
     beq  $t9, $t1, convertFromBinaryToOctal
 
