@@ -6,16 +6,21 @@
 # Mars documentation
 
 .data
+    # texts
     inputBaseText:      .asciiz "Digite a base do numero de entrada (b/o/d/h):   "
     outputBaseText:     .asciiz "Digite a base de conversão (b/o/d/h):   "
     inputNumberText:    .asciiz "Digite o numero a ser convertido:   "
     ivalidBaseText:     .asciiz "Base invalida fornecida."
     outputText:         .asciiz "O numero na nova base eh: "
     newline:            .asciiz "\n"
+
+    ## input base types
     binary:             .byte   'b'
     octal:              .byte   'o'
     decimal:            .byte   'd'
     hexa:               .byte   'h'
+
+    ## arrays for program usage
     inputNumberArray:   .space  32
     outputNumberArray:  .space  32
     auxiliaryArray:     .space  32
