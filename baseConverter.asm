@@ -93,7 +93,7 @@ convertFinish:
     beq  $t9, $t0, convertToHexa
 
     # input is hexa
-    j invalidBase
+    j    invalidBase
 
 convertStart:
     # t9 will be used as an auxiliary var for comparisions
@@ -123,7 +123,7 @@ convertStart:
     beq  $t9, $t0, convertFromHexa
 
     # input is hexa
-    j invalidBase
+    j    invalidBase
 
 
 ######### ORIGIN BASE FUNCTIONS ####################
@@ -232,6 +232,7 @@ octalStringToDecimalLoop:
 ######### BASE TO FUNCTIONS #############
 
 convertToBinary:
+
 # @TODO: FINISH IMPLEMENTATION
 
 convertToOctal:
@@ -255,7 +256,7 @@ sameBase:
     la   $a0, inputNumberArray
     jal  printString
 
-    j exit
+    j    exit
 
 outputAsDecimal:            # receive a0 as the number to output
     move $a1, $a0           # store a0 value into a1 to use a0 later
@@ -263,9 +264,9 @@ outputAsDecimal:            # receive a0 as the number to output
     jal  printString        # call method to printString
 
     move $a0, $a1           # restores input number to a0
-    li  $v0, 1              # print_string syscall code = 4
+    li   $v0, 1              # print_string syscall code = 4
     syscall
-    j exit
+    j    exit
 
 ######### HELPER FUNCTIONS ##############
 printNewline:               # Print string newline
