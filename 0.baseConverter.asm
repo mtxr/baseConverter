@@ -134,9 +134,6 @@ convertStart:
 # get input number and check what to do
 .include "1.baseFrom.asm"
 
-# get origin base and convert to decimal integer
-.include "2.allToDecimal.asm"
-
 # destiny base functions. Get an decimal interger and converto to new base
 .include "3.baseTo.asm"
 

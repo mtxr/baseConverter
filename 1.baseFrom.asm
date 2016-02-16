@@ -33,4 +33,8 @@ convertFromHexa:
     lb   $t9, 0($t9)
     beq  $t9, $t1, sameBase
 
-    # @TODO: FINISH IMPLEMENTATION
+    j    fromHexaStringToDecimal
+
+
+# get origin base and convert to decimal integer
+.include "2.allToDecimal.asm"
