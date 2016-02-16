@@ -170,8 +170,8 @@ binaryToOctalLoop:
     mfhi $t7
     bgezal $t7, octalOverflow
     li   $t7, 32                    # t7 = 32
-    bgt  $t8, $t7, printInt         # print int if t8 > t7 (or 32)
-    j binaryToDecimalLoop
+    bgt  $t8, $t7, printOutput         # print int if t8 > t7 (or 32)
+    j binaryToOctalLoop
 
 octalOverflow:
     sw   $t7, 0($t3)
