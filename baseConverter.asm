@@ -63,11 +63,36 @@ main:
     # t0 = base from conversion
     # t1 = base to conversion
 
-    j convert
+    j convertStart
+
+convertFinish:
+    # receive $a0 as the inputNumber in the integer form and decide what to do
+
+    # is output Decimal?
+    la   $t9, decimal
+    lb   $t9, 0($t9)
+    beq  $t9, $t1, outputAsDecimal
+
+    # is output binary?
+    la   $t9, binary
+    lb   $t9, 0($t9)
+    beq  $t9, $t1, convertToBinary
+
+    # is output octal?
+    la   $t9, octal
+    lb   $t9, 0($t9)
+    beq  $t9, $t1, convertToOctal
 
 
+    # is output Hexa?
+    la   $t9, hexa
+    lb   $t9, 0($t9)
+    beq  $t9, $t1, convertToHexa
 
-printOutput:
+    # input is hexa
+    j invalidBase
+
+sameBase:
     # Print string outputText
     la   $a0, outputText
     jal  printString
@@ -78,7 +103,7 @@ printOutput:
 
     j exit
 
-convert:
+convertStart:
     # t9 will be used as an auxiliary var for comparisions
     # t8 will be our counter during conversion
     # t2 will receive inputNumberArray address
@@ -113,15 +138,9 @@ convertFromBinary:
     # output base is binary too, so just print it
     la   $t9, binary
     lb   $t9, 0($t9)
-    beq  $t9, $t1, printOutput
+    beq  $t9, $t1, sameBase
 
-    la   $t9, decimal
-    lb   $t9, 0($t9)
-    beq  $t9, $t1, convertFromBinaryToDecimal
-
-    la   $t9, octal
-    lb   $t9, 0($t9)
-    beq  $t9, $t1, convertFromBinaryToOctal
+    j  convertFromBinaryToDecimal
 
 convertFromBinaryToDecimal:
     # start counter
@@ -133,52 +152,17 @@ convertFromBinaryToDecimal:
 binaryToDecimalLoop:
     lb   $t7, 0($t2)
     addi $t7, $t7, -48              # convert from string to int
-    blt  $t7, $zero, printInt       # print int if t7 < 0
+    blt  $t7, $zero, convertFinish  # print int if t7 < 0
     mul  $t7, $t7, $t8              # mult t7 * t8
     add  $a0, $a0, $t7              # add t7 to a0
     li   $t6, 2                     # load 2 to t6
     mul  $t8, $t8, $t6              # t8 = t8 * t6
     addi $t2, $t2, 1                # increment array position
     li   $t7, 32                    # t7 = 32
-    bgt  $t8, $t7, printInt         # print int if t8 > t7 (or 32)
+    bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
     j binaryToDecimalLoop
 
-convertFromBinaryToOctal:
-    # start counter
-    la   $t2, inputNumberArray       # load inputNumber address to t2
-    la   $t3, outputNumberArray      # load inputNumber address to t2
-    addi $t3, $t3, 31                # lastArray position
-
-    li   $t8, 1                      # start our counter
-    j binaryToDecimalLoop
-
-binaryToOctalLoop:
-    li   $a0, 0                      # output number
-    lb   $t7, 0($t2)
-    addi $t7, $t7, -48              # convert from string to int
-    blt  $t7, $zero, printOutput    # print int if t7 < 0
-    mul  $t7, $t7, $t8              # mult t7 * t8
-    add  $a0, $a0, $t7              # add t7 to a0
-    li   $t6, 8
-    div  $a0, $t6
-    mflo $t7
-    sw   $t7, 0($t3)
-    addi $t3, $t3, -1
-    li   $t6, 2                     # load 2 to t6
-    mul  $t8, $t8, $t6              # t8 = t8 * t6
-    addi $t2, $t2, 1                # increment array position
-    mfhi $t7
-    bgezal $t7, octalOverflow
-    li   $t7, 32                    # t7 = 32
-    bgt  $t8, $t7, printOutput         # print int if t8 > t7 (or 32)
-    j binaryToOctalLoop
-
-octalOverflow:
-    sw   $t7, 0($t3)
-    addi $t3, $t3, -1
-    jr   $ra
-
-printInt:
+outputAsDecimal:
     move $a1, $a0
     la   $a0, outputText
     jal  printString
@@ -193,19 +177,26 @@ convertFromOctal:
     # output base is octal too, so just print it
     la   $t9, octal
     lb   $t9, 0($t9)
-    beq  $t9, $t1, printOutput
+    beq  $t9, $t1, sameBase
 
 convertFromDecimal:
     # output base is decimal too, so just print it
     la   $t9, decimal
     lb   $t9, 0($t9)
-    beq  $t9, $t1, printOutput
+    beq  $t9, $t1, sameBase
 
 convertFromHexa:
     # output base is hexa too, so just print it
     la   $t9, hexa
     lb   $t9, 0($t9)
-    beq  $t9, $t1, printOutput
+    beq  $t9, $t1, sameBase
+
+
+convertToBinary:
+
+convertToOctal:
+
+convertToHexa:
 
 invalidBase:
     la   $a0, invalidBase
