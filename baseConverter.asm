@@ -225,18 +225,20 @@ octalStringToDecimalLoop:
 
 ######### BASE TO FUNCTIONS #############
 
+# DECIMAL -> BINARY STRING ARRAY
 convertToBinary:
 
 # @TODO: FINISH IMPLEMENTATION
 
+# DECIMAL -> OCTAL STRING ARRAY
 convertToOctal:
 # @TODO: FINISH IMPLEMENTATION
 
+# DECIMAL -> HEXA STRING ARRAY
 convertToHexa:
 # @TODO: FINISH IMPLEMENTATION
 
 ######### OUTPUT FUNCTIONS ##############
-
 invalidBase:
     la   $a0, invalidBase
     jal  printString
