@@ -11,13 +11,14 @@
     inputNumberText:    .asciiz "Digite o numero a ser convertido:   "
     ivalidBaseText:     .asciiz "Base invalida fornecida."
     outputText:         .asciiz "O numero na nova base eh: "
-    inputNumberArray:   .space  32
-    outputNumberArray:  .space  32
     newline:            .asciiz "\n"
     binary:             .byte   'b'
     octal:              .byte   'o'
     decimal:            .byte   'd'
     hexa:               .byte   'h'
+    inputNumberArray:   .space  32
+    outputNumberArray:  .space  32
+    auxiliaryArray:     .space  32
 
 
 # program code
@@ -63,8 +64,7 @@ main:
 
 
 ###### CONVERSION FUNCTIONS ########
-convertFinish:
-    # receive $a0 as the inputNumber in the integer form and decide what to do
+convertFinish:                          # receive $a0 as the inputNumber in the integer form and decide what to do
     move $t0, $t1                       # move output base to t0
     # so now we have
     # t0 as the input base
@@ -227,6 +227,20 @@ octalStringToDecimalLoop:
 
 # DECIMAL -> BINARY STRING ARRAY
 convertToBinary:
+    li   $t0, 2             # load t0 with 2 to divide
+    la   $a1, auxiliaryArray # load outputArrayAddress
+    j    decimalToBinaryLoop
+
+decimalToBinaryLoop:
+    divu $a0, $t0            # lo = a0/2, hi = a0 % 2
+    mfhi $t1                 # t1 = hi (remainder)
+    mflo $a0                 # a0 = lo or a0 = (a0/2)
+    addi $t1, $t1, 48        # convert to char
+    sb   $t1, 0($a1)         # save to outputArray
+    addi $a1, $a1, 1         # ++ auxiliaryArray position
+    bgtz $a0, decimalToBinaryLoop
+    jal  revertAuxiliaryArray
+    j    outputAsString
 
 # @TODO: FINISH IMPLEMENTATION
 
@@ -263,6 +277,31 @@ outputAsDecimal:            # receive a0 as the number to output
     li   $v0, 1              # print_string syscall code = 4
     syscall
     j    exit
+
+outputAsString:
+    la   $a0, outputText    # get outputText address
+    jal  printString        # call method to printString
+
+    la  $a0, outputNumberArray
+    jal  printString        # call method to printString
+    j    exit
+
+revertAuxiliaryArray:
+    # a1 is the last auxiliaryArray position
+    la   $a0, outputNumberArray
+    li   $t0, 0             # i = 0
+
+
+revertArrayLoop:
+    addi $a1, $a1, -1
+    lb   $t0, 0($a1)
+    beqz $t0, return
+    sb   $t0, 0($a0)
+    addi $a0, $a0, 1
+    j    revertArrayLoop
+
+return:
+    jr  $ra
 
 ######### HELPER FUNCTIONS ##############
 printNewline:               # Print string newline
