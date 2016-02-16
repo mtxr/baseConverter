@@ -39,6 +39,7 @@ revertToAuxiliaryArray:
     j    revertFromA1
 
 revertToInputArray:
+    addi $a1, $a1, -1       # -- auxiliaryArray position
     la   $a0, inputNumberArray # load outputNumberArray address
     j    revertFromA1
 
@@ -60,8 +61,8 @@ copyToAuxiliaryArray:
 
 copyLoop:
     lb   $t9, 0($a0)
+    beq  $t9, $zero, return
     sb   $t9, 0($a1)
     addi $a0, $a0, 1
     addi $a1, $a1, 1
-    beq  $t9, $zero, return
     j    copyLoop
