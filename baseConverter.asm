@@ -168,7 +168,7 @@ fromBinaryStringToDecimal:
     la   $t2, inputNumberArray       # load inputNumber address to t2
     li   $t8, 1                      # start our counter
     li   $a0, 0                      # output number
-    j binaryToDecimalLoop
+    j    binaryToDecimalLoop
 
 binaryToDecimalLoop:
     lb   $t7, 0($t2)
@@ -179,8 +179,6 @@ binaryToDecimalLoop:
     li   $t6, 2                     # load 2 to t6
     mul  $t8, $t8, $t6              # t8 = t8 * t6
     addi $t2, $t2, 1                # increment array position
-    #li   $t7, 32                    # t7 = 32
-    #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
     j    binaryToDecimalLoop
 
 
@@ -201,8 +199,6 @@ decStringToDecimalLoop:
     mul  $a0, $a0, $t6              # t8 = t8 * t6
     add  $a0, $a0, $t7              # add t7 to a0
     addi $t2, $t2, 1                # increment array position
-    #li   $t7, 32                    # t7 = 32
-    #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
     j    decStringToDecimalLoop
 
 
@@ -222,8 +218,6 @@ octalStringToDecimalLoop:
     mul  $a0, $a0, $t6              # t8 = t8 * t6
     add  $a0, $a0, $t7              # add t7 to a0
     addi $t2, $t2, 1                # increment array position
-    #li   $t7, 32                    # t7 = 32
-    #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
     j    octalStringToDecimalLoop
 
 ### HEXA -> DECIMAL
