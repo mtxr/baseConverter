@@ -35,17 +35,13 @@ main:
     ############# END READING INPUT BASE #######################################
 
 
-
-
     # Print string inputNumberText
     la   $a0, inputNumberText   # load the address of inputNumberText
     jal  printString
 
     # Get input number from user and save
     jal  readNumber
-    jal  printNewline
     ############# END READING INPUT NUMBER #######################################
-
 
 
 
@@ -138,7 +134,7 @@ convertFromBinary:
     lb   $t9, 0($t9)
     beq  $t9, $t1, sameBase
 
-    j  fromBinaryStringToDecimal
+    j    fromBinaryStringToDecimal
 
 convertFromOctal:
     # output base is octal too, so just print it
@@ -146,13 +142,15 @@ convertFromOctal:
     lb   $t9, 0($t9)
     beq  $t9, $t1, sameBase
 
+    j    fromOctalStringToDecimal
+
 convertFromDecimal:
     # output base is decimal too, so just print it
     la   $t9, decimal
     lb   $t9, 0($t9)
     beq  $t9, $t1, sameBase
 
-    j  fromDecimalStringToDecimal
+    j    fromDecimalStringToDecimal
 
 convertFromHexa:
     # output base is hexa too, so just print it
@@ -181,27 +179,46 @@ binaryToDecimalLoop:
     addi $t2, $t2, 1                # increment array position
     #li   $t7, 32                    # t7 = 32
     #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
-    j binaryToDecimalLoop
+    j    binaryToDecimalLoop
 
 fromDecimalStringToDecimal:
     # start counter
     la   $t2, inputNumberArray       # load inputNumber address to t2
     li   $t8, 1                      # start our counter
     li   $a0, 0                      # output number
-    j decStringToDecimalLoop
+    j    decStringToDecimalLoop
 
 decStringToDecimalLoop:
     lb   $t7, 0($t2)
     addi $t7, $t7, -48              # convert from string to int
     blt  $t7, $zero, convertFinish  # print int if t7 < 0
     mul  $t7, $t7, $t8              # mult t7 * t8
-    li   $t6, 10                    # load 2 to t6
+    li   $t6, 10                    # load 10 to t6
     mul  $a0, $a0, $t6              # t8 = t8 * t6
     add  $a0, $a0, $t7              # add t7 to a0
     addi $t2, $t2, 1                # increment array position
     #li   $t7, 32                    # t7 = 32
     #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
-    j decStringToDecimalLoop
+    j    decStringToDecimalLoop
+
+fromOctalStringToDecimal:
+    # start counter
+    la   $t2, inputNumberArray       # load inputNumber address to t2
+    li   $t8, 1                      # start our counter
+    li   $a0, 0                      # output number
+    j    octalStringToDecimalLoop
+
+octalStringToDecimalLoop:
+    lb   $t7, 0($t2)
+    addi $t7, $t7, -48              # convert from string to int
+    blt  $t7, $zero, convertFinish  # print int if t7 < 0
+    li   $t6, 8                     # load 2 to t6
+    mul  $a0, $a0, $t6              # t8 = t8 * t6
+    add  $a0, $a0, $t7              # add t7 to a0
+    addi $t2, $t2, 1                # increment array position
+    #li   $t7, 32                    # t7 = 32
+    #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
+    j    octalStringToDecimalLoop
 
 ######### BASE TO FUNCTIONS #############
 
