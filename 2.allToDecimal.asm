@@ -1,3 +1,5 @@
+# CONVERT ANY INPUT TO DECIMAL INTEGER
+
 ######### STRING TO DECIMAL FUNCIONS ###############
 ### BINARY -> DECIMAL
 fromBinaryStringToDecimal:

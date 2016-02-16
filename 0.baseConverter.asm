@@ -131,12 +131,17 @@ convertStart:
     j    invalidBase
 
 
-.include "baseFrom.asm"
+# get input number and check what to do
+.include "1.baseFrom.asm"
 
-.include "preProcess.asm"
+# get origin base and convert to decimal integer
+.include "2.allToDecimal.asm"
 
-.include "baseTo.asm"
+# destiny base functions. Get an decimal interger and converto to new base
+.include "3.baseTo.asm"
 
-.include "output.asm"
+# output functions
+.include "0.output.asm"
 
-.include "helpers.asm"
+# helper functions
+.include "0.helpers.asm"
