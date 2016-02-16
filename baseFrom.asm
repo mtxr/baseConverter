@@ -5,6 +5,9 @@ convertFromBinary:
     la   $t9, binary
     lb   $t9, 0($t9)
     beq  $t9, $t1, sameBase
+    la   $a0, inputNumberArray
+    jal  copyToAuxiliaryArray          # get last array address to a1
+    jal  revertToInputArray            # revert input array for conversion to decimal
 
     j    fromBinaryStringToDecimal
 

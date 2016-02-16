@@ -31,26 +31,3 @@ outputAsString:
     la  $a0, outputNumberArray
     jal  printString        # call method to printString
     j    exit
-
-revertToOutputArray:
-    la   $a0, outputNumberArray  # load outputNumberArray address
-    j    revertFromA1
-
-revertToAuxiliaryArray:
-    la   $a0, auxiliaryArray # load outputNumberArray address
-    j    revertFromA1
-
-revertToInputArray:
-    la   $a0, auxiliaryArray # load outputNumberArray address
-    j    revertFromA1
-
-revertFromA1:               # a1 is the last position, (array to revert)
-    li   $t0, 0             # i = 0
-
-revertArrayLoop:
-    addi $a1, $a1, -1       # -- auxiliaryArray position
-    lb   $t0, 0($a1)        # load byte from auxiliaryArray
-    beqz $t0, return        # if no char was read, return to print
-    sb   $t0, 0($a0)        # save loaded byte to ouput array
-    addi $a0, $a0, 1        # ++ outputNumberArray position
-    j    revertArrayLoop    # return to loop
