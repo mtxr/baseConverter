@@ -7,7 +7,7 @@
 
 .data
     # texts
-    inputBaseText:      .asciiz "Digite a base do numero de entrada (b/o/d/h):   "
+    inputBaseText:      .asciiz "Instruções:\n\nUse apenas digitos e caracteres em MAIUSCULO na entrada de numeros. [0-9A-F]\n\nDigite a base do numero de entrada (b/o/d/h):   "
     outputBaseText:     .asciiz "Digite a base de conversão (b/o/d/h):   "
     inputNumberText:    .asciiz "Digite o numero a ser convertido:   "
     ivalidBaseText:     .asciiz "Base invalida fornecida."

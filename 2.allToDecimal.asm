@@ -71,6 +71,7 @@ hexaStringToDecimalLoop:
     lb   $t7, 0($t2)
     ble  $t7, '9', inputSub48       # if t7 less than or equal to char '9' inputSub48
     addi $t7, $t7, -55              # convert from string (ABCDEF) to int
+    j    inputHexaNormalized
 inputHexaNormalized:
     blt  $t7, $zero, convertFinish  # print int if t7 < 0
     li   $t6, 16                    # load 16 to t6

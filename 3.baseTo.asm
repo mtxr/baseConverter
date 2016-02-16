@@ -36,8 +36,9 @@ decimalToHexa:        # receive t0 with the divisor value
     mfhi $t1                 # t1 = hi (remainder)
     mflo $a0                 # a0 = lo or a0 = (a0/t0)
     ble  $t1, 9, outputSum48 # less then 10, sum 48
-outputHexaNormalized:
     addi $t1, $t1, 55        # convert to char (ABCDEF)
+    j    outputHexaNormalized
+outputHexaNormalized:
     sb   $t1, 0($a1)         # save to outputArray
     addi $a1, $a1, 1         # ++ auxiliaryArray position
     bgtz $a0, decimalToHexa
