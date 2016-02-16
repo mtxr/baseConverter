@@ -65,43 +65,39 @@ main:
 
     j convertStart
 
+
+###### CONVERSION FUNCTIONS ########
 convertFinish:
     # receive $a0 as the inputNumber in the integer form and decide what to do
+    move $t0, $t1                       # move output base to t0
+    # so now we have
+    # t0 as the input base
+    # a0 has the input number as an integer
+    # if inputBase = outputBase the number was already printed
 
     # is output Decimal?
     la   $t9, decimal
     lb   $t9, 0($t9)
-    beq  $t9, $t1, outputAsDecimal
+    beq  $t9, $t0, outputAsDecimal
 
     # is output binary?
     la   $t9, binary
     lb   $t9, 0($t9)
-    beq  $t9, $t1, convertToBinary
+    beq  $t9, $t0, convertToBinary
 
     # is output octal?
     la   $t9, octal
     lb   $t9, 0($t9)
-    beq  $t9, $t1, convertToOctal
+    beq  $t9, $t0, convertToOctal
 
 
     # is output Hexa?
     la   $t9, hexa
     lb   $t9, 0($t9)
-    beq  $t9, $t1, convertToHexa
+    beq  $t9, $t0, convertToHexa
 
     # input is hexa
     j invalidBase
-
-sameBase:
-    # Print string outputText
-    la   $a0, outputText
-    jal  printString
-
-    # Print converted number
-    la   $a0, inputNumberArray
-    jal  printString
-
-    j exit
 
 convertStart:
     # t9 will be used as an auxiliary var for comparisions
@@ -134,15 +130,40 @@ convertStart:
     j invalidBase
 
 
+######### ORIGIN BASE FUNCTIONS ####################
+
 convertFromBinary:
     # output base is binary too, so just print it
     la   $t9, binary
     lb   $t9, 0($t9)
     beq  $t9, $t1, sameBase
 
-    j  convertFromBinaryToDecimal
+    j  fromBinaryStringToDecimal
 
-convertFromBinaryToDecimal:
+convertFromOctal:
+    # output base is octal too, so just print it
+    la   $t9, octal
+    lb   $t9, 0($t9)
+    beq  $t9, $t1, sameBase
+
+convertFromDecimal:
+    # output base is decimal too, so just print it
+    la   $t9, decimal
+    lb   $t9, 0($t9)
+    beq  $t9, $t1, sameBase
+
+    j  fromDecimalStringToDecimal
+
+convertFromHexa:
+    # output base is hexa too, so just print it
+    la   $t9, hexa
+    lb   $t9, 0($t9)
+    beq  $t9, $t1, sameBase
+
+
+######### STRING TO DECIMAL FUNCIONS ###############
+
+fromBinaryStringToDecimal:
     # start counter
     la   $t2, inputNumberArray       # load inputNumber address to t2
     li   $t8, 1                      # start our counter
@@ -158,39 +179,31 @@ binaryToDecimalLoop:
     li   $t6, 2                     # load 2 to t6
     mul  $t8, $t8, $t6              # t8 = t8 * t6
     addi $t2, $t2, 1                # increment array position
-    li   $t7, 32                    # t7 = 32
-    bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
+    #li   $t7, 32                    # t7 = 32
+    #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
     j binaryToDecimalLoop
 
-outputAsDecimal:
-    move $a1, $a0
-    la   $a0, outputText
-    jal  printString
+fromDecimalStringToDecimal:
+    # start counter
+    la   $t2, inputNumberArray       # load inputNumber address to t2
+    li   $t8, 1                      # start our counter
+    li   $a0, 0                      # output number
+    j decStringToDecimalLoop
 
-    move $a0, $a1
-    li  $v0, 1          # print_string syscall code = 4
-    syscall
-    j exit
+decStringToDecimalLoop:
+    lb   $t7, 0($t2)
+    addi $t7, $t7, -48              # convert from string to int
+    blt  $t7, $zero, convertFinish  # print int if t7 < 0
+    mul  $t7, $t7, $t8              # mult t7 * t8
+    li   $t6, 10                    # load 2 to t6
+    mul  $a0, $a0, $t6              # t8 = t8 * t6
+    add  $a0, $a0, $t7              # add t7 to a0
+    addi $t2, $t2, 1                # increment array position
+    #li   $t7, 32                    # t7 = 32
+    #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
+    j decStringToDecimalLoop
 
-
-convertFromOctal:
-    # output base is octal too, so just print it
-    la   $t9, octal
-    lb   $t9, 0($t9)
-    beq  $t9, $t1, sameBase
-
-convertFromDecimal:
-    # output base is decimal too, so just print it
-    la   $t9, decimal
-    lb   $t9, 0($t9)
-    beq  $t9, $t1, sameBase
-
-convertFromHexa:
-    # output base is hexa too, so just print it
-    la   $t9, hexa
-    lb   $t9, 0($t9)
-    beq  $t9, $t1, sameBase
-
+######### BASE TO FUNCTIONS #############
 
 convertToBinary:
 
@@ -202,29 +215,53 @@ invalidBase:
     la   $a0, invalidBase
     jal  printString
 
-# Print string newline
-printNewline:
-    la  $a0, newline    # load the address of newline
-    li  $v0, 4          # print_string syscall code = 4
+sameBase:
+    # Print string outputText
+    la   $a0, outputText
+    jal  printString
+
+    # Print converted number
+    la   $a0, inputNumberArray
+    jal  printString
+
+    j exit
+
+
+######### OUTPUT FUNCTIONS ##############
+
+outputAsDecimal:            # receive a0 as the number to output
+    move $a1, $a0           # store a0 value into a1 to use a0 later
+    la   $a0, outputText    # get outputText address
+    jal  printString        # call method to printString
+
+    move $a0, $a1           # restores input number to a0
+    li  $v0, 1              # print_string syscall code = 4
     syscall
-    jr  $ra
+    j exit
+
+######### HELPER FUNCTIONS ##############
+printNewline:               # Print string newline
+    la   $a0, newline       # load the address of newline
+    li   $v0, 4             # print_string syscall code = 4
+    syscall
+    jr   $ra                # return
 
 printString:
-    li  $v0, 4          # print_string syscall code = 4
+    li   $v0, 4             # print_string syscall code = 4
     syscall
-    jr  $ra
+    jr   $ra                # return
 
 readBase:
-    li  $v0, 12         # read_string syscall code = 8
+    li   $v0, 12            # read_string syscall code = 8
     syscall
-    jr  $ra
+    jr   $ra                # return
 
 readNumber:
     la   $a0, inputNumberArray  # load inputBase address to argument0
-    li   $v0, 8          # read_string syscall code = 8
-    li   $a1, 32         # space allocated for inputBase
+    li   $v0, 8             # read_string syscall code = 8
+    li   $a1, 32            # space allocated for inputBase
     syscall
-    jr   $ra
+    jr   $ra                # return
 
 exit:
     jal printNewline
