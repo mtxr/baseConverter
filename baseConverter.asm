@@ -274,7 +274,7 @@ outputAsDecimal:            # receive a0 as the number to output
     jal  printString        # call method to printString
 
     move $a0, $a1           # restores input number to a0
-    li   $v0, 1              # print_string syscall code = 4
+    li   $v0, 1             # print_string syscall code = 4
     syscall
     j    exit
 
@@ -286,22 +286,21 @@ outputAsString:
     jal  printString        # call method to printString
     j    exit
 
-revertAuxiliaryArray:
+revertAuxiliaryArray:       # a1 is the last auxiliaryArray position, (array to revert)
     # a1 is the last auxiliaryArray position
-    la   $a0, outputNumberArray
+    la   $a0, outputNumberArray  # load outputNumberArray address
     li   $t0, 0             # i = 0
 
-
 revertArrayLoop:
-    addi $a1, $a1, -1
-    lb   $t0, 0($a1)
-    beqz $t0, return
-    sb   $t0, 0($a0)
-    addi $a0, $a0, 1
-    j    revertArrayLoop
+    addi $a1, $a1, -1       # -- auxiliaryArray position
+    lb   $t0, 0($a1)        # load byte from auxiliaryArray
+    beqz $t0, return        # if no char was read, return to print
+    sb   $t0, 0($a0)        # save loaded byte to ouput array
+    addi $a0, $a0, 1        # ++ outputNumberArray position
+    j    revertArrayLoop    # return to loop
 
 return:
-    jr  $ra
+    jr  $ra                 # return to last saved address
 
 ######### HELPER FUNCTIONS ##############
 printNewline:               # Print string newline
