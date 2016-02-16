@@ -119,6 +119,10 @@ convertFromBinary:
     lb   $t9, 0($t9)
     beq  $t9, $t1, convertFromBinaryToDecimal
 
+    la   $t9, decimal
+    lb   $t9, 0($t9)
+    beq  $t9, $t1, convertFromBinaryToOctal
+
 convertFromBinaryToDecimal:
     # start counter
     la   $t2, inputNumberArray       # load inputNumber address to t2
@@ -138,6 +142,41 @@ binaryToDecimalLoop:
     li   $t7, 32                    # t7 = 32
     bgt  $t8, $t7, printInt         # print int if t8 > t7 (or 32)
     j binaryToDecimalLoop
+
+convertFromBinaryToOctal:
+    # start counter
+    la   $t2, inputNumberArray       # load inputNumber address to t2
+    la   $t3, outputNumberArray      # load inputNumber address to t2
+    addi $t3, $t3, 31                # lastArray position
+
+    li   $t8, 1                      # start our counter
+    j binaryToDecimalLoop
+
+binaryToOctalLoop:
+    li   $a0, 0                      # output number
+    lb   $t7, 0($t2)
+    addi $t7, $t7, -48              # convert from string to int
+    blt  $t7, $zero, printOutput    # print int if t7 < 0
+    mul  $t7, $t7, $t8              # mult t7 * t8
+    add  $a0, $a0, $t7              # add t7 to a0
+    li   $t6, 8
+    div  $a0, $t6
+    mflo $t7
+    sw   $t7, 0($t3)
+    addi $t3, $t3, -1
+    li   $t6, 2                     # load 2 to t6
+    mul  $t8, $t8, $t6              # t8 = t8 * t6
+    addi $t2, $t2, 1                # increment array position
+    mfhi $t7
+    bgezal $t7, octalOverflow
+    li   $t7, 32                    # t7 = 32
+    bgt  $t8, $t7, printInt         # print int if t8 > t7 (or 32)
+    j binaryToDecimalLoop
+
+octalOverflow:
+    sw   $t7, 0($t3)
+    addi $t3, $t3, -1
+    jr   $ra
 
 printInt:
     move $a1, $a0
