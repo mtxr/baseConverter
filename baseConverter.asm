@@ -158,9 +158,11 @@ convertFromHexa:
     lb   $t9, 0($t9)
     beq  $t9, $t1, sameBase
 
+    # @TODO: FINISH IMPLEMENTATION
+
 
 ######### STRING TO DECIMAL FUNCIONS ###############
-
+### BINARY -> DECIMAL
 fromBinaryStringToDecimal:
     # start counter
     la   $t2, inputNumberArray       # load inputNumber address to t2
@@ -181,6 +183,8 @@ binaryToDecimalLoop:
     #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
     j    binaryToDecimalLoop
 
+
+### DECIMAL STRING -> DECIMAL
 fromDecimalStringToDecimal:
     # start counter
     la   $t2, inputNumberArray       # load inputNumber address to t2
@@ -201,6 +205,8 @@ decStringToDecimalLoop:
     #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
     j    decStringToDecimalLoop
 
+
+### OCTAL -> DECIMAL
 fromOctalStringToDecimal:
     # start counter
     la   $t2, inputNumberArray       # load inputNumber address to t2
@@ -220,13 +226,21 @@ octalStringToDecimalLoop:
     #bgt  $t8, $t7, convertFinish    # print int if t8 > t7 (or 32)
     j    octalStringToDecimalLoop
 
+### HEXA -> DECIMAL
+# @TODO: FINISH IMPLEMENTATION
+
 ######### BASE TO FUNCTIONS #############
 
 convertToBinary:
+# @TODO: FINISH IMPLEMENTATION
 
 convertToOctal:
+# @TODO: FINISH IMPLEMENTATION
 
 convertToHexa:
+# @TODO: FINISH IMPLEMENTATION
+
+######### OUTPUT FUNCTIONS ##############
 
 invalidBase:
     la   $a0, invalidBase
@@ -242,9 +256,6 @@ sameBase:
     jal  printString
 
     j exit
-
-
-######### OUTPUT FUNCTIONS ##############
 
 outputAsDecimal:            # receive a0 as the number to output
     move $a1, $a0           # store a0 value into a1 to use a0 later
