@@ -32,9 +32,19 @@ outputAsString:
     jal  printString        # call method to printString
     j    exit
 
-revertAuxiliaryArray:       # a1 is the last auxiliaryArray position, (array to revert)
-    # a1 is the last auxiliaryArray position
+revertToOutputArray:
     la   $a0, outputNumberArray  # load outputNumberArray address
+    j    revertFromA1
+
+revertToAuxiliaryArray:
+    la   $a0, auxiliaryArray # load outputNumberArray address
+    j    revertFromA1
+
+revertToInputArray:
+    la   $a0, auxiliaryArray # load outputNumberArray address
+    j    revertFromA1
+
+revertFromA1:               # a1 is the last position, (array to revert)
     li   $t0, 0             # i = 0
 
 revertArrayLoop:

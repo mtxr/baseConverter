@@ -14,7 +14,7 @@ decimalToBinaryLoop:
     sb   $t1, 0($a1)         # save to outputArray
     addi $a1, $a1, 1         # ++ auxiliaryArray position
     bgtz $a0, decimalToBinaryLoop
-    jal  revertAuxiliaryArray
+    jal  revertToOutputArray
     j    outputAsString
 
 # @TODO: FINISH IMPLEMENTATION
