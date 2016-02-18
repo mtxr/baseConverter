@@ -10,6 +10,11 @@ printString:
     syscall
     jr   $ra                # return
 
+printError:
+    la   $a0, invalidInputText
+    jal  printString
+    j    exit
+
 readBase:
     li   $v0, 12            # read_string syscall code = 8
     syscall
