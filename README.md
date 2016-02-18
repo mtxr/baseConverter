@@ -1,2 +1,2 @@
 # baseConverter
-ICMC Assembly Base Converter
+MIPS Assembly Base Converter
