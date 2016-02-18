@@ -22,9 +22,9 @@
     hexa:               .byte   'h'
 
     ## arrays for program usage
-    inputNumberArray:   .space  32
-    outputNumberArray:  .space  32
-    auxiliaryArray:     .space  32
+    inputNumberArray:   .space  33
+    outputNumberArray:  .space  33
+    auxiliaryArray:     .space  33
 
 
 # program code
